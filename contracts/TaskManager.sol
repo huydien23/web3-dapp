@@ -163,7 +163,8 @@ contract TaskManager {
     {
         // Nếu có tiền thưởng, hoàn lại cho owner
         if (congViecs[_id].tienThuong > 0 && !congViecs[_id].daNhanThuong) {
-            payable(msg.sender).transfer(congViecs[_id].tienThuong);
+            (bool success, ) = payable(msg.sender).call{value: congViecs[_id].tienThuong}("");
+            require(success, "Hoan tien that bai!");
         }
         
         delete congViecs[_id];
@@ -245,7 +246,9 @@ contract TaskManager {
         cv.daNhanThuong = true;
         cv.tienThuong = 0;
         
-        payable(msg.sender).transfer(soTien);
+        (bool success, ) = payable(msg.sender).call{value: soTien}("");
+        require(success, "Chuyen tien that bai!");
+        
         emit ThuongDuocNhan(_id, msg.sender, soTien);
     }
     
